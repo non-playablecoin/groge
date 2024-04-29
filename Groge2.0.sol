@@ -53,10 +53,7 @@ contract ERC420 is Ownable {
 
     event URI(string value, uint256 indexed id);
 
-    event AllowListChange(
-        address indexed target,
-        bool approved
-    );
+    event AllowListChange(address indexed target, bool approved);
 
     // Errors
 
@@ -295,6 +292,14 @@ contract ERC420 is Ownable {
         }
         if (!isInAllowlist(to)) {
             _nft_mint(to, 0, value);
+            ERC1155Utils.checkOnERC1155Received(
+                msg.sender,
+                address(0),
+                to,
+                id,
+                value,
+                ""
+            );
         }
     }
 
@@ -320,6 +325,14 @@ contract ERC420 is Ownable {
         }
         if (!isInAllowlist(to)) {
             _nft_mint(to, 0, value);
+            ERC1155Utils.checkOnERC1155BatchReceived(
+                msg.sender,
+                address(0),
+                to,
+                ids,
+                values,
+                ""
+            );
         }
     }
 
@@ -382,14 +395,27 @@ contract ERC420 is Ownable {
         return true;
     }
 
-    function increaseAllowance(address _spender, uint256 _addedValue) public returns (bool) {
-        _approve(msg.sender, _spender, _allowances[msg.sender][_spender].add(_addedValue));
+    function increaseAllowance(address _spender, uint256 _addedValue)
+        public
+        returns (bool)
+    {
+        _approve(
+            msg.sender,
+            _spender,
+            _allowances[msg.sender][_spender].add(_addedValue)
+        );
         return true;
     }
 
-    function decreaseAllowance(address _spender, uint256 _subtractedValue) public returns (bool) {
+    function decreaseAllowance(address _spender, uint256 _subtractedValue)
+        public
+        returns (bool)
+    {
         uint256 currentAllowance = _allowances[msg.sender][_spender];
-        require(currentAllowance >= _subtractedValue, "DECREASED_ALLOWANCE_BELOW_ZERO");
+        require(
+            currentAllowance >= _subtractedValue,
+            "DECREASED_ALLOWANCE_BELOW_ZERO"
+        );
         _approve(msg.sender, _spender, currentAllowance.sub(_subtractedValue));
         return true;
     }
