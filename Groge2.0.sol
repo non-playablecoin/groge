@@ -162,13 +162,13 @@ contract ERC420 is Ownable {
         address to,
         uint256 id,
         uint256 value,
-        bytes calldata
+        bytes calldata data
     ) external {
         address sender = msg.sender;
         if (from != sender && !isApprovedForAll(from, sender)) {
             revert MissingApprovalForAll(sender, from);
         }
-        _safeTransferFrom(from, to, id, value);
+        _safeTransferFrom(from, to, id, value, data);
     }
 
     function safeBatchTransferFrom(
@@ -176,13 +176,13 @@ contract ERC420 is Ownable {
         address to,
         uint256[] calldata ids,
         uint256[] calldata values,
-        bytes calldata
+        bytes calldata data
     ) external {
         address sender = msg.sender;
         if (from != sender && !isApprovedForAll(from, sender)) {
             revert MissingApprovalForAll(sender, from);
         }
-        _safeBatchTransferFrom(from, to, ids, values);
+        _safeBatchTransferFrom(from, to, ids, values, data);
     }
 
     function setApprovalForAll(address operator, bool approved) external {
@@ -274,7 +274,8 @@ contract ERC420 is Ownable {
         address from,
         address to,
         uint256 id,
-        uint256 value
+        uint256 value,
+        bytes calldata data
     ) internal {
         if (to == address(0)) {
             revert InvalidReceiver(address(0));
@@ -298,7 +299,7 @@ contract ERC420 is Ownable {
                 to,
                 id,
                 value,
-                ""
+                data
             );
         }
     }
@@ -307,7 +308,8 @@ contract ERC420 is Ownable {
         address from,
         address to,
         uint256[] memory ids,
-        uint256[] memory values
+        uint256[] memory values,
+        bytes calldata data
     ) internal {
         if (to == address(0)) {
             revert InvalidReceiver(address(0));
@@ -331,7 +333,7 @@ contract ERC420 is Ownable {
                 to,
                 ids,
                 values,
-                ""
+                data
             );
         }
     }
